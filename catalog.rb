@@ -1,7 +1,8 @@
 class Catalog
-  attr_accessor :catalog_array, :catalog_file
+  attr_accessor :catalog_array, :catalog_file, :catalog
 
   def initialize(catalog_name)
+    Dir.mkdir('pictures') unless File.exists?('pictures')
     @catalog_array = []
     @catalog_file = if File.exist?(catalog_name)
       File.open(catalog_name, 'r+')
