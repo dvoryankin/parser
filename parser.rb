@@ -57,8 +57,9 @@ module Parser
     @stats.total_items += 1
 
     @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
-    if @stats.total_items == 33
+    if @stats.total_items == 1000
       @stats.print_statistics
+      exit
     end
   end
 

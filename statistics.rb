@@ -47,9 +47,9 @@ class Statistics
     calculate_statistics
     puts 'Summary'
     @items_in_group.each do |group, count|
-      puts "#{group}: #{count} items, #{@group_percent_of_total[group]}% of total"
+      puts "#{group}: #{count} items, #{@group_percent_of_total[group].round(2)}% of total"
     end
-    puts "Percent goods with pictures: #{@percent_items_with_pic}%"
+    puts "Percent goods with pictures: #{@percent_items_with_pic.round(2)}%"
     puts "Top size image: #{@max_size_pic[:name]}; size: #{@max_size_pic[:size]} kB"
     puts "Least size image: #{@min_size_pic[:name]}; size: #{@min_size_pic[:size]} kB"
   end
