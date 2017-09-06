@@ -1,4 +1,5 @@
-load 'statistics.rb'
+require './statistics'
+require './catalog'
 
 module Parser
   attr_accessor :depth, :products_array, :stats

@@ -1,6 +1,6 @@
 require 'mechanize'
-load 'parser.rb'
-load 'catalog.rb'
+require './parser'
+require './catalog'
 
 include Parser
 
