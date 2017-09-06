@@ -56,7 +56,7 @@ module Parser
 
     puts "#{@stats.total_items} - #{record}"
 
-    if @stats.total_items == 1000
+    if @stats.total_items == 1001
       @stats.print_statistics
       @catalog.read_catalog(products_array)
       @catalog.save
