@@ -51,14 +51,15 @@ module Parser
   def new_record(type, group, name, pic)
     record = "#{type}\t#{group}\t#{name}\t#{pic}\n"
     @products_array << record
+    @stats.total_items += 1
+    @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
 
     puts "#{@stats.total_items} - #{record}"
 
-    @stats.total_items += 1
-
-    @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
     if @stats.total_items == 1000
       @stats.print_statistics
+      @catalog.read_catalog(products_array)
+      @catalog.save
       exit
     end
   end
