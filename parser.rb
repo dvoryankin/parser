@@ -25,22 +25,13 @@ module Parser
       pic = take_pic_name(row)
       cat_id = page.uri.path.scan(/\/(\d+)\//).flatten[0]
 
-      @iid = row.attributes["href"].to_s.scan(/\/(\d+)\//)[1]
+      if row.attributes["href"].to_s.scan(/\/(\d+)\//)[1].nil?
+        iid = '---'
+      else
+        iid = row.attributes["href"].to_s.scan(/\/(\d+)\//)[1][0]
+      end
 
-      # page.at("table[@class='goods']").css("td input").each do |n|
-      #   n.map do |node|
-      #     p id[1]
-      #     end
-      #   end
-      # end
-      #
-      # map { |node| @iid = node[:id][/\d+/] }
-      # @iid = row.text.scan(/\d*$/).flatten[0]
-
-      # @iid = page.at("table[@class='goods']").css("td input").map { |node| node[:id][/\d+/] }
-
-      new_record(type, group, name, id, pic, cat_id, @iid)
-      # print "iid: #{(page.text)  }   "
+      new_record(type, group, name, id, pic, cat_id, iid)
       row['href']
     end
     hrefs.map { |link| page.link_with(href: link) }
@@ -71,7 +62,7 @@ module Parser
   end
 
   def new_record(type, group, name, id, pic, cat_id, iid)
-    record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{cat_id}\t#{@iid}\n"
+    record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{cat_id}\t#{iid}\n"
 
     @products_array << record
     @stats.total_items += 1
