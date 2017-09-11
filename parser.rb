@@ -13,6 +13,12 @@ module Parser
   end
 
   def parse_page(page, tag, type, group)
+    last_iid = []
+
+    File.readlines('catalog.txt').each do |line|
+      last_iid << line.split("\t")[-1]
+    end
+
     hrefs = page.search(tag).map do |row|
       name = row.text.sub(/\d*$/, '')
       id = row.text.scan(/\d*$/).flatten[0]
@@ -34,12 +40,6 @@ module Parser
 
       p record.split("\t")
 
-      last_iid = []
-
-      File.readlines('catalog.txt').each do |line|
-        last_iid << line.split("\t")[-1]
-      end
-
       if last_iid.include? item_id_arr
         @stats.total_items -= 1
       end
@@ -50,7 +50,7 @@ module Parser
 
       puts "#{@stats.total_items} - #{record}"
 
-      if @stats.total_items == 44
+      if @stats.total_items == 66
         @stats.print_statistics
         @catalog.read_catalog(products_array)
         @catalog.save
