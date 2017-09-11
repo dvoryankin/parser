@@ -12,5 +12,3 @@ group_links = scan_main(main_page)
 group_links.each do |link|
   scan_page(link)
 end
-
-

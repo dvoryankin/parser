@@ -21,8 +21,4 @@ class Catalog
       @catalog_file << row
     end
   end
-
-  def length
-    @catalog_array.length
-  end
 end

@@ -13,9 +13,6 @@ module Parser
   end
 
   def parse_page(page, tag, type, group)
-
-    # @iid = page.at("table[@class='goods']").css("td input").map { |node| node[:id][/\d+/] }
-
     hrefs = page.search(tag).map do |row|
       name = row.text.sub(/\d*$/, '')
       id = row.text.scan(/\d*$/).flatten[0]
@@ -23,15 +20,54 @@ module Parser
         name = row['title']
       end
       pic = take_pic_name(row)
-      cat_id = page.uri.path.scan(/\/(\d+)\//).flatten[0]
+      sub_id = page.uri.path.scan(/\/(\d+)\//).flatten[0]
 
       if row.attributes["href"].to_s.scan(/\/(\d+)\//)[1].nil?
-        iid = '---'
+        iid = '- - -'
       else
         iid = row.attributes["href"].to_s.scan(/\/(\d+)\//)[1][0]
       end
 
-      new_record(type, group, name, id, pic, cat_id, iid)
+      record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{sub_id}\t#{iid}\n"
+
+      item_id_arr = record.split("\t")[-1]
+      sub_id_arr = record.split("\t")[-2]
+      id_arr = record.split("\t")[-4]
+
+      p record.split("\t")
+
+      puts item_id_arr
+      puts sub_id_arr
+      puts id_arr
+
+      last_iid = []
+
+      File.readlines('catalog.txt').each do |line|
+        last_iid << line.split("\t")[-1]
+        last_iid << line.split("\t")[-2]
+        last_iid << line.split("\t")[-4]
+      end
+
+      if last_iid.include? item_id_arr
+        @stats.total_items -= 1
+      elsif last_iid.include? sub_id_arr
+        @stats.total_items -= 0
+      elsif last_iid.include? id_arr
+        @stats.total_items -= 0
+      end
+
+      @products_array << record
+      @stats.total_items += 1
+      @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
+
+      puts "#{@stats.total_items} - #{record}"
+
+      if @stats.total_items == 44
+        @stats.print_statistics
+        @catalog.read_catalog(products_array)
+        @catalog.save
+        exit
+      end
       row['href']
     end
     hrefs.map { |link| page.link_with(href: link) }
@@ -59,23 +95,6 @@ module Parser
   def scan_products(page, group)
     type = 'product'
     parse_page(page, '#content.bar .goods .img', type, group)
-  end
-
-  def new_record(type, group, name, id, pic, cat_id, iid)
-    record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{cat_id}\t#{iid}\n"
-
-    @products_array << record
-    @stats.total_items += 1
-    @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
-
-    puts "#{@stats.total_items} - #{record}"
-
-    if @stats.total_items == 66
-      @stats.print_statistics
-      @catalog.read_catalog(products_array)
-      @catalog.save
-      exit
-    end
   end
 
   def take_pic_name(row)
