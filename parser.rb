@@ -31,29 +31,17 @@ module Parser
       record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{sub_id}\t#{iid}\n"
 
       item_id_arr = record.split("\t")[-1]
-      sub_id_arr = record.split("\t")[-2]
-      id_arr = record.split("\t")[-4]
 
       p record.split("\t")
-
-      puts item_id_arr
-      puts sub_id_arr
-      puts id_arr
 
       last_iid = []
 
       File.readlines('catalog.txt').each do |line|
         last_iid << line.split("\t")[-1]
-        last_iid << line.split("\t")[-2]
-        last_iid << line.split("\t")[-4]
       end
 
       if last_iid.include? item_id_arr
         @stats.total_items -= 1
-      elsif last_iid.include? sub_id_arr
-        @stats.total_items -= 0
-      elsif last_iid.include? id_arr
-        @stats.total_items -= 0
       end
 
       @products_array << record
