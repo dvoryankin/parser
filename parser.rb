@@ -27,9 +27,7 @@ module Parser
 
       record = "#{type}\t#{group}\t#{name}\t#{pic}\t#{iid}\n"
 
-      if @last_iid.include? iid
-        @stats.total_items
-      else
+      unless @last_iid.include? iid
         @products_array << record
         @stats.total_items += 1
         @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1

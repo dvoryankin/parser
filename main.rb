@@ -6,7 +6,6 @@ include Parser
 
 @catalog = Catalog.new('catalog.txt')
 
-
 @last_iid = Set.new
 File.readlines('catalog.txt').each do |line|
   @last_iid << line.split("\t")[-1].chomp
