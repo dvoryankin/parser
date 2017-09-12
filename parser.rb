@@ -1,6 +1,7 @@
 require './statistics'
 require './catalog'
 require 'pry'
+require 'set'
 
 module Parser
   attr_accessor :depth, :products_array, :stats
@@ -13,44 +14,28 @@ module Parser
   end
 
   def parse_page(page, tag, type, group)
-    last_iid = []
-
-    File.readlines('catalog.txt').each do |line|
-      last_iid << line.split("\t")[-1]
-    end
-
     hrefs = page.search(tag).map do |row|
       name = row.text.sub(/\d*$/, '')
-      id = row.text.scan(/\d*$/).flatten[0]
+      iid = row['href']
+
       if type == 'product'
         name = row['title']
-      end
-      pic = take_pic_name(row)
-      sub_id = page.uri.path.scan(/\/(\d+)\//).flatten[0]
-
-      if row.attributes["href"].to_s.scan(/\/(\d+)\//)[1].nil?
-        iid = '- - -'
-      else
         iid = row.attributes["href"].to_s.scan(/\/(\d+)\//)[1][0]
       end
 
-      record = "#{type}\t#{group}\t#{name}\t#{id}\t#{pic}\t#{sub_id}\t#{iid}\n"
+      pic = take_pic_name(row)
 
-      item_id_arr = record.split("\t")[-1]
+      record = "#{type}\t#{group}\t#{name}\t#{pic}\t#{iid}\n"
 
-      p record.split("\t")
-
-      if last_iid.include? item_id_arr
+      if @last_iid.include? iid
         @stats.total_items -= 1
+      else
+        @products_array << record
+        @stats.total_items += 1
+        @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
       end
 
-      @products_array << record
-      @stats.total_items += 1
-      @stats.items_in_group[@current_group] += 1 if Parser.depth >= 1
-
-      puts "#{@stats.total_items} - #{record}"
-
-      if @stats.total_items == 66
+      if @stats.total_items == 1000
         @stats.print_statistics
         @catalog.read_catalog(products_array)
         @catalog.save
