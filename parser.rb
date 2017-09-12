@@ -28,7 +28,7 @@ module Parser
       record = "#{type}\t#{group}\t#{name}\t#{pic}\t#{iid}\n"
 
       if @last_iid.include? iid
-        @stats.total_items -= 1
+        @stats.total_items
       else
         @products_array << record
         @stats.total_items += 1
