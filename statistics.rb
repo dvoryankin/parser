@@ -28,7 +28,6 @@ class Statistics
       end
     end
   end
-
   def calculate_statistics
     @items_in_group.each do |group, count|
       @group_percent_of_total[group] = 100 * count / @total_items
